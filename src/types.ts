@@ -35,7 +35,7 @@ export interface WeightEntry {
 }
 
 export interface UserStats {
-  membershipExpiry: string; // "Czerwiec 2024" or customizable
+  membershipExpiry: string; // "Czerwiec 2026" or customizable
   isPremium: boolean;
   kcalBurnedToday: number;
   kcalTarget: number;

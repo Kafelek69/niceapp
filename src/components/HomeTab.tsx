@@ -29,7 +29,7 @@ export default function HomeTab({
   const notifications = [
     { id: 1, title: "Zadbaj o nawodnienie!", desc: "Nie piłeś wody od 2 godzin. Organizm potrzebuje płynów do sprawnej syntezy białek.", unread: true, time: "10 min temu" },
     { id: 2, title: "Nowy rekord życiowy! 🏆", desc: "Zarejestrowałeś pełny trening klatki i pleców w czasie poniżej 50 minut.", unread: true, time: "Wczoraj" },
-    { id: 3, title: "Witaj w Silent Coach Premium", desc: "Twój inteligentny trener personalny AI jest teraz w pełni połączony z Twoją wagą i celami.", unread: false, time: "3 dni temu" },
+    { id: 3, title: "Witaj w Premium", desc: "Twój profil jest teraz w pełni zsynchronizowany z Twoją wagą i celami.", unread: false, time: "3 dni temu" },
   ];
 
   return (
@@ -118,7 +118,7 @@ export default function HomeTab({
               PREMIUM
             </div>
           </div>
-          <p className="text-xs text-gray-400 font-semibold">Pozostało 6 miesięcy</p>
+          <p className="text-xs text-gray-400 font-semibold">Pozostało 1 miesiąc</p>
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { motion } from 'motion/react';
-import { ShieldCheck, Sparkles, Target, Settings, Sliders, Scale, Trash2, CheckCircle2, ListCollapse } from 'lucide-react';
+import { ShieldCheck, Target, Settings, Sliders, Scale, Trash2, CheckCircle2, ListCollapse } from 'lucide-react';
 import { UserStats } from '../types';
 
 interface ProfileTabProps {
@@ -16,13 +16,7 @@ export default function ProfileTab({ stats, onUpdateStats, onResetAllData }: Pro
   const [currentWeight, setCurrentWeight] = useState(stats.weight);
   const [goalWeight, setGoalWeight] = useState(stats.weightGoal);
   
-  // Custom Coaching Focus state to alter Gemini feedback format!
-  const [coachingFocus, setCoachingFocus] = useState<'REDUKCJA' | 'MASA' | 'SIŁA_REKORD'>('REDUKCJA');
-
-  // AI loading and data output states
-  const [aiLoading, setAiLoading] = useState(false);
-  const [coachAnalysis, setCoachAnalysis] = useState<string>('');
-  const [coachTips, setCoachTips] = useState<string[]>([]);
+  // Data save state
   const [isSaved, setIsSaved] = useState(false);
 
   // Load initial stats into settings fields
@@ -48,60 +42,13 @@ export default function ProfileTab({ stats, onUpdateStats, onResetAllData }: Pro
     }, 1500);
   };
 
-  // FETCH AI Feedback from Express Gemini proxy route!
-  const handleGenerateCoachAdvice = async () => {
-    setAiLoading(true);
-    setCoachAnalysis('');
-    setCoachTips([]);
-
-    try {
-      const response = await fetch('/api/coach-advice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          kcalBurned: stats.kcalBurnedToday,
-          kcalTarget: stats.kcalTarget,
-          waterConsumed: stats.waterConsumedToday,
-          waterTarget: stats.waterTarget,
-          weight: stats.weight,
-          completedCount: stats.completedWorkouts.length,
-          activeWorkoutTitle: stats.completedWorkouts[stats.completedWorkouts.length - 1]?.workoutTitle || "Brak",
-          focus: coachingFocus
-        })
-      });
-
-      const data = await response.json();
-      setCoachAnalysis(data.advice || "Zawsze sprawdzaj swoją formę, dbaj o technikę i trzymaj się planu.");
-      setCoachTips(data.tips || ["Utrzymuj stabilne tempo", "Pilnuj nawodnienia", "Regeneruj się"]);
-    } catch (error) {
-      console.error("Failed to query Express Silent Coach analysis path:", error);
-      setCoachAnalysis("Aplikacja działa w trybie lokalnym. Skoncentruj się na regeneracji powięziowej i nawodnieniu.");
-      setCoachTips(["Pij 200ml wody co 15 minut", "Zachowaj pełne napięcie korpusu", "Regeneruj stawy"]);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  // Immediate coach advisory on mount or fallback
-  useEffect(() => {
-    // Generate an automatic default coaching paragraph so screen is never empty
-    setCoachAnalysis("Witaj w panelu Silent Coach. Kliknij 'WYGENERUJ ANALIZĘ TRENERA AI' poniżej, aby Twój bot-trener przeanalizował aktywne parametry biologiczne w czasie rzeczywistym.");
-    setCoachTips([
-      "Utrzymuj tętno w strefie cardio podczas interwałów.",
-      "Zapisuj wagę zaraz po przebudzeniu na czczo.",
-      "Spożywaj 1.8g - 2.2g białka na kg masy ciała przy treningach siłowych."
-    ]);
-  }, []);
-
   return (
     <div className="space-y-6 font-sans pb-28">
       {/* Tab Title */}
       <div className="flex justify-between items-center border-b border-white/5 py-4">
         <div>
           <h2 className="font-display font-black text-2xl text-white tracking-tight uppercase">PROFIL ZAWODNIKA</h2>
-          <p className="text-gray-400 text-xs font-semibold font-sans">Ustawienia biologiczne, parametry treningu i trener AI</p>
+          <p className="text-gray-400 text-xs font-semibold font-sans">Ustawienia biologiczne i parametry treningu</p>
         </div>
       </div>
 
@@ -128,72 +75,6 @@ export default function ProfileTab({ stats, onUpdateStats, onResetAllData }: Pro
           </div>
         </div>
       </div>
-
-      {/* AI COACH ANALYTICS CONTAINER (Gemini powered) */}
-      <section className="bg-brand-lime/10 border-2 border-brand-lime/20 rounded-2xl p-5 space-y-4 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-lime/5 rounded-full blur-2xl pointer-events-none" />
-        
-        <div className="flex justify-between items-start">
-          <div className="space-y-0.5">
-            <h4 className="font-display font-black text-xs text-brand-lime uppercase tracking-widest flex items-center gap-1.5 leading-none">
-              <Sparkles size={14} className="animate-pulse" />
-              TRENER OSOBISTY AI
-            </h4>
-            <p className="text-[10px] text-gray-400 font-semibold uppercase leading-none mt-1">Status: Aktywny na bazie Twoich logów</p>
-          </div>
-
-          <select 
-            value={coachingFocus}
-            onChange={(e) => setCoachingFocus(e.target.value as any)}
-            className="bg-[#131313] border border-white/10 text-brand-lime text-[10px] font-bold font-display px-2.5 py-1 rounded outline-none cursor-pointer"
-          >
-            <option value="REDUKCJA">Redukcja tłuszczu</option>
-            <option value="MASA">Budowa masy</option>
-            <option value="SIŁA_REKORD">Rozwój siły maks.</option>
-          </select>
-        </div>
-
-        {/* Generated analysis paragraph */}
-        <div className="bg-[#131313]/90 border border-white/5 p-4 rounded-xl space-y-3 min-h-[90px] relative">
-          {aiLoading ? (
-            <div className="flex flex-col items-center justify-center py-6 space-y-2">
-              <div className="w-5 h-5 border-2 border-brand-lime border-t-transparent rounded-full animate-spin" />
-              <p className="text-[10px] font-bold tracking-widest font-display text-gray-400 uppercase">Analizowanie logów biologicznych...</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-xs text-slate-100 leading-relaxed font-semibold italic">
-                "{coachAnalysis}"
-              </p>
-              
-              {coachTips.length > 0 && (
-                <div className="space-y-1.5 pt-2 border-t border-white/5">
-                  <p className="text-[9.5px] font-bold text-gray-500 uppercase font-display tracking-widest">WYZNACZONE WYTYCZNE TRENINGOWE:</p>
-                  <ul className="space-y-1">
-                    {coachTips.map((tip, idx) => (
-                      <li key={idx} className="text-xs text-brand-lime flex items-start gap-1.5 font-semibold">
-                        <span className="mr-0.5 text-center bg-brand-lime/15 text-brand-lime text-[8px] w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0">
-                          {idx + 1}
-                        </span>
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        <button 
-          onClick={handleGenerateCoachAdvice}
-          disabled={aiLoading}
-          className="w-full py-3 bg-brand-lime text-black font-display font-black text-xs rounded-xl flex items-center justify-center gap-1.5 tracking-wider hover:bg-brand-lime-dim active:scale-95 transition-all outline-none bloom-button disabled:opacity-50"
-        >
-          <Sparkles size={13} fill="currentColor" />
-          <span>WYGENERUJ ANALIZĘ TRENERA AI</span>
-        </button>
-      </section>
 
       {/* Target goals inputs form */}
       <section className="bg-[#1e1e1e] border border-white/5 rounded-2xl p-5 space-y-4">

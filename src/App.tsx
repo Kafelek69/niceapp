@@ -16,11 +16,11 @@ import ProfileTab from './components/ProfileTab';
 import WorkoutPlayer from './components/WorkoutPlayer';
 import QuickLogModal from './components/QuickLogModal';
 
-const STATS_STORAGE_KEY = 'silent_coach_stats_v1';
-const WORKOUTS_STORAGE_KEY = 'silent_coach_workouts_v1';
+const STATS_STORAGE_KEY = 'stats_v1';
+const WORKOUTS_STORAGE_KEY = 'workouts_v1';
 
 const DEFAULT_STATS: UserStats = {
-  membershipExpiry: "Czerwiec 2024",
+  membershipExpiry: "26 Czerwiec 2026",
   isPremium: true,
   kcalBurnedToday: 1420,
   kcalTarget: 2000,
@@ -158,7 +158,7 @@ export default function App() {
     setStats(DEFAULT_STATS);
     setWorkouts(INITIAL_WORKOUTS);
     setActiveTab('home');
-    alert("Dane Silent Coach zresetowane pomyślnie.");
+    alert("Dane zresetowane pomyślnie.");
   };
 
   return (
