@@ -69,7 +69,7 @@ export default function ProfileTab({ stats, onUpdateStats, onResetAllData }: Pro
 
         <div>
           <h3 className="font-display font-bold text-base text-white">Silent Athlete</h3>
-          <p className="text-[11px] text-gray-500 font-semibold truncate max-w-[180px]">patrykmarkiewicz2004@gmail.com</p>
+          <p className="text-[11px] text-gray-500 font-semibold truncate max-w-[180px]">tutajmialbycemail@gmail.com</p>
           <div className="flex items-center gap-1 mt-1 text-xs">
             <span className="font-bold text-brand-lime font-display text-[10px] uppercase">Status: Premium (6m)</span>
           </div>
